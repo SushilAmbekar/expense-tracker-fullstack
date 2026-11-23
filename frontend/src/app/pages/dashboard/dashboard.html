@@ -1,0 +1,138 @@
+<header class="page-header">
+  <div>
+    <h1>Dashboard</h1>
+    <p class="page-sub">Your spending in {{ monthName() }}</p>
+  </div>
+  <div class="header-actions">
+    <app-month-switcher [month]="month()" (monthChange)="changeMonth($event)" />
+    <button mat-flat-button (click)="addExpense()">
+      <mat-icon>add</mat-icon>
+      Add expense
+    </button>
+  </div>
+</header>
+
+@if (loading() && !summary()) {
+  <mat-progress-bar mode="indeterminate" />
+}
+@if (error(); as message) {
+  <div class="panel error-panel" role="alert">
+    {{ message }}
+    <button mat-button (click)="load()">Try again</button>
+  </div>
+}
+
+@if (summary(); as s) {
+  <section class="stats">
+    <article class="panel stat">
+      <span class="stat-icon brand"><mat-icon>payments</mat-icon></span>
+      <span class="stat-label">Total spent</span>
+      <strong class="stat-value">{{ s.total | inr }}</strong>
+      @if (s.changePercent !== null) {
+        <span class="trend" [class.up]="s.changePercent > 0" [class.down]="s.changePercent < 0">
+          <mat-icon>{{ s.changePercent > 0 ? 'trending_up' : 'trending_down' }}</mat-icon>
+          {{ s.changePercent > 0 ? '+' : '' }}{{ s.changePercent | number: '1.0-1' }}% vs last month
+        </span>
+      } @else {
+        <span class="trend">No spending last month</span>
+      }
+    </article>
+
+    <article class="panel stat">
+      <span class="stat-icon orange"><mat-icon>savings</mat-icon></span>
+      <span class="stat-label">Budget</span>
+      @if (budgetUsed() !== null) {
+        <strong class="stat-value">{{ s.budgetTotal | inr }}</strong>
+        <span class="trend" [class.up]="budgetUsed()! > 100">
+          {{ budgetUsed() }}% used ·
+          {{ s.budgetTotal - s.total >= 0 ? (s.budgetTotal - s.total | inr) + ' left' : (s.total - s.budgetTotal | inr) + ' over' }}
+        </span>
+      } @else {
+        <strong class="stat-value muted">Not set</strong>
+        <a class="trend link" routerLink="/budgets">Set a budget</a>
+      }
+    </article>
+
+    <article class="panel stat">
+      <span class="stat-icon green"><mat-icon>calendar_today</mat-icon></span>
+      <span class="stat-label">Average per day</span>
+      <strong class="stat-value">{{ s.averagePerDay | inr }}</strong>
+      <span class="trend">Last month: {{ s.previousMonthTotal | inr }}</span>
+    </article>
+
+    <article class="panel stat">
+      <span class="stat-icon pink"><mat-icon>receipt_long</mat-icon></span>
+      <span class="stat-label">Transactions</span>
+      <strong class="stat-value">{{ s.transactionCount }}</strong>
+      <span class="trend">{{ s.byCategory.length }} categories</span>
+    </article>
+  </section>
+
+  @if (s.transactionCount === 0) {
+    <section class="panel empty">
+      <mat-icon>receipt_long</mat-icon>
+      <h2>No expenses in {{ monthName() }}</h2>
+      <p>Add your first expense to see your spending charts.</p>
+      <button mat-flat-button (click)="addExpense()"><mat-icon>add</mat-icon> Add expense</button>
+    </section>
+  } @else {
+    <section class="grid">
+      <article class="panel chart-panel">
+        <h2>Spending by category</h2>
+        <div class="chart-box"><app-chart [config]="categoryChart()" label="Spending by category" /></div>
+      </article>
+      <article class="panel chart-panel">
+        <h2>Last 6 months</h2>
+        <div class="chart-box"><app-chart [config]="trendChart()" label="Spending in the last 6 months" /></div>
+      </article>
+      <article class="panel chart-panel wide">
+        <h2>Spending through the month</h2>
+        <div class="chart-box"><app-chart [config]="dailyChart()" label="Cumulative spending this month" /></div>
+      </article>
+
+      <article class="panel">
+        <div class="panel-head">
+          <h2>Budgets</h2>
+          <a mat-button routerLink="/budgets">Manage</a>
+        </div>
+        @for (b of budgets(); track b.categoryId) {
+          <div class="budget">
+            <div class="budget-row">
+              <span class="dot" [style.background]="b.color"></span>
+              <span class="budget-name">{{ b.name }}</span>
+              <span class="budget-amount">{{ b.total | inr }} / {{ b.budget | inr }}</span>
+            </div>
+            <div class="meter" [class.warn]="b.percent >= 80" [class.over]="b.percent > 100">
+              <span [style.width.%]="b.percent > 100 ? 100 : b.percent"></span>
+            </div>
+          </div>
+        } @empty {
+          <p class="muted">No budgets for {{ monthName() }}. <a routerLink="/budgets">Set one</a></p>
+        }
+      </article>
+
+      <article class="panel">
+        <div class="panel-head">
+          <h2>Recent expenses</h2>
+          <a mat-button routerLink="/expenses">View all</a>
+        </div>
+        <ul class="recent">
+          @for (e of recent(); track e.id) {
+            <li>
+              <span class="cat-icon" [style.background]="e.category.color + '22'" [style.color]="e.category.color">
+                {{ e.category.name[0] }}
+              </span>
+              <span class="recent-text">
+                <span class="recent-title">{{ e.description || e.category.name }}</span>
+                <span class="recent-meta">
+                  {{ e.date | date: 'd MMM' }} · {{ e.category.name }} · {{ paymentMethodLabel(e.paymentMethod) }}
+                </span>
+              </span>
+              <strong>{{ e.amount | inr: 'exact' }}</strong>
+            </li>
+          }
+        </ul>
+      </article>
+    </section>
+  }
+}

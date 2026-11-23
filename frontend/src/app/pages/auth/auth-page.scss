@@ -1,0 +1,169 @@
+.page {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  align-items: center;
+  gap: 48px;
+  padding: 48px max(24px, 6vw);
+  background:
+    radial-gradient(circle at 10% 10%, var(--brand-soft), transparent 45%),
+    var(--page);
+}
+
+.hero {
+  max-width: 520px;
+
+  h1 {
+    margin: 32px 0 12px;
+    font-size: clamp(32px, 4vw, 46px);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  p {
+    color: var(--muted);
+    font-size: 17px;
+    line-height: 1.6;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 28px 0;
+    display: grid;
+    gap: 14px;
+  }
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    mat-icon {
+      color: var(--brand);
+    }
+  }
+
+  .stack {
+    font-size: 13px;
+  }
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.logo {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--brand), var(--brand-2));
+  color: #fff;
+}
+
+.card {
+  width: 100%;
+  max-width: 420px;
+  justify-self: center;
+  padding: 32px;
+  border-radius: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: 0 20px 50px -20px rgb(15 23 42 / 25%);
+
+  h2 {
+    margin: 0;
+    font-size: 24px;
+  }
+
+  .sub {
+    margin: 6px 0 20px;
+    color: var(--muted);
+  }
+}
+
+form {
+  display: grid;
+  gap: 14px;
+}
+
+.submit,
+.demo {
+  width: 100%;
+  height: 44px;
+}
+
+.submit mat-spinner {
+  margin: 0 auto;
+}
+
+.notice {
+  margin-bottom: 16px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--brand-soft);
+  color: var(--brand-ink);
+  font-size: 14px;
+
+  &.error {
+    background: var(--danger-soft);
+    color: var(--danger);
+  }
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 18px 0;
+  color: var(--muted);
+  font-size: 13px;
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+}
+
+.switch {
+  margin: 20px 0 0;
+  text-align: center;
+  color: var(--muted);
+
+  a {
+    color: var(--brand);
+    font-weight: 600;
+  }
+}
+
+@media (max-width: 899px) {
+  .page {
+    grid-template-columns: 1fr;
+    padding: 24px 16px;
+    gap: 24px;
+  }
+
+  .hero {
+    ul,
+    .stack {
+      display: none;
+    }
+
+    h1 {
+      margin-top: 20px;
+    }
+  }
+
+  .card {
+    padding: 24px;
+  }
+}

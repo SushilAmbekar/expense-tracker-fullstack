@@ -1,0 +1,169 @@
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.stat {
+  display: grid;
+  gap: 4px;
+}
+
+.stat-icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  margin-bottom: 8px;
+  border-radius: 12px;
+
+  &.brand { background: #eef2ff; color: #4f46e5; }
+  &.orange { background: #fff7ed; color: #ea580c; }
+  &.green { background: #ecfdf5; color: #059669; }
+  &.pink { background: #fdf2f8; color: #db2777; }
+}
+
+.stat-label {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.stat-value {
+  font-size: 26px;
+  letter-spacing: -0.02em;
+}
+
+.trend {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--muted);
+  font-size: 13px;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+
+  &.up { color: var(--danger); }
+  &.down { color: var(--success); }
+  &.link { color: var(--brand); font-weight: 600; }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.wide {
+  grid-column: 1 / -1;
+}
+
+.chart-box {
+  height: 260px;
+}
+
+.panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+
+  h2 {
+    margin: 0;
+  }
+}
+
+.budget {
+  padding: 10px 0;
+}
+
+.budget-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.budget-name {
+  flex: 1;
+  font-weight: 500;
+}
+
+.budget-amount {
+  color: var(--muted);
+}
+
+.recent {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+
+    &:last-child {
+      border-bottom: 0;
+    }
+  }
+}
+
+.recent-text {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+}
+
+.recent-title {
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.recent-meta {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+@media (max-width: 1023px) {
+  .stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 479px) {
+  .stats {
+    gap: 12px;
+  }
+
+  .stat {
+    padding: 14px;
+  }
+
+  .stat-icon {
+    width: 32px;
+    height: 32px;
+    margin-bottom: 4px;
+  }
+
+  .stat-value {
+    font-size: 20px;
+  }
+
+  .trend {
+    font-size: 12px;
+  }
+}
