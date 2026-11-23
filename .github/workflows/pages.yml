@@ -1,0 +1,43 @@
+name: Live demo
+
+# Publishes the demo build of the frontend to GitHub Pages. The demo runs the API in the browser,
+# so it needs no server: https://sushilambekar.github.io/expense-tracker-fullstack/
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: npm run build:demo
+      # GitHub Pages serves 404.html for unknown paths; the app uses # routes, so this only covers typos.
+      - run: cp dist/frontend/browser/index.html dist/frontend/browser/404.html
+      - uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: frontend/dist/frontend/browser
+          publish_branch: gh-pages
+          force_orphan: true

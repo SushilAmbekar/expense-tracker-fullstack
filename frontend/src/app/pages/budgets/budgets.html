@@ -1,0 +1,105 @@
+<header class="page-header">
+  <div>
+    <h1>Budgets</h1>
+    <p class="page-sub">Set how much you want to spend per category in {{ monthName() }}</p>
+  </div>
+  <div class="header-actions">
+    <app-month-switcher [month]="month()" (monthChange)="changeMonth($event)" />
+    <button mat-stroked-button (click)="copyFromLastMonth()" [matTooltip]="'Copy the budgets of ' + previousMonthName()">
+      <mat-icon>content_copy</mat-icon>
+      Copy last month
+    </button>
+  </div>
+</header>
+
+@if (loading()) {
+  <mat-progress-bar mode="indeterminate" />
+}
+@if (error(); as message) {
+  <div class="panel error-panel" role="alert">
+    {{ message }}
+    <button mat-button (click)="load()">Try again</button>
+  </div>
+}
+
+@if (budgets().length > 0) {
+  <section class="panel overview">
+    <div>
+      <span class="label">Total budget</span>
+      <strong>{{ totals().amount | inr }}</strong>
+    </div>
+    <div>
+      <span class="label">Spent</span>
+      <strong>{{ totals().spent | inr }}</strong>
+    </div>
+    <div>
+      <span class="label">{{ totals().remaining >= 0 ? 'Left' : 'Over budget' }}</span>
+      <strong [class.over-text]="totals().remaining < 0">{{ (totals().remaining < 0 ? -totals().remaining : totals().remaining) | inr }}</strong>
+    </div>
+    <div class="overall">
+      <span class="label">{{ totals().percent }}% used</span>
+      <div class="meter" [class.warn]="totals().percent >= 80" [class.over]="totals().percent > 100">
+        <span [style.width.%]="totals().percent > 100 ? 100 : totals().percent"></span>
+      </div>
+    </div>
+  </section>
+}
+
+<section class="budget-grid">
+  @for (b of budgets(); track b.id) {
+    <article class="panel budget">
+      <div class="budget-head">
+        <span class="dot" [style.background]="b.color"></span>
+        <h2>{{ b.categoryName }}</h2>
+        <button mat-icon-button (click)="remove(b)" matTooltip="Remove budget" aria-label="Remove budget">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+      <div class="amounts">
+        <strong>{{ b.spent | inr }}</strong>
+        <span class="of">of</span>
+        @if (editing() === b.id) {
+          <input #amount class="amount-input" type="number" min="1" [value]="b.amount" aria-label="Budget amount"
+                 (keydown.enter)="amount.blur()" (keydown.escape)="editing.set(null)"
+                 (blur)="updateAmount(b, amount.value)" autofocus />
+        } @else {
+          <button class="amount-button" (click)="editing.set(b.id)" matTooltip="Change the amount">
+            {{ b.amount | inr }} <mat-icon>edit</mat-icon>
+          </button>
+        }
+      </div>
+      <div class="meter" [class.warn]="b.percentUsed >= 80" [class.over]="b.percentUsed > 100">
+        <span [style.width.%]="b.percentUsed > 100 ? 100 : b.percentUsed"></span>
+      </div>
+      <div class="status" [class.over-text]="b.remaining < 0" [class.warn-text]="b.remaining >= 0 && b.percentUsed >= 80">
+        @if (b.remaining < 0) {
+          <mat-icon>error</mat-icon> {{ -b.remaining | inr }} over budget
+        } @else if (b.percentUsed >= 80) {
+          <mat-icon>warning</mat-icon> {{ b.remaining | inr }} left · {{ b.percentUsed }}% used
+        } @else {
+          {{ b.remaining | inr }} left · {{ b.percentUsed }}% used
+        }
+      </div>
+    </article>
+  }
+
+  @if (unbudgeted().length > 0) {
+    <article class="panel budget add" [formGroup]="form">
+      <h2>Add a budget</h2>
+      <mat-form-field>
+        <mat-label>Category</mat-label>
+        <mat-select formControlName="categoryId">
+          @for (c of unbudgeted(); track c.id) {
+            <mat-option [value]="c.id">{{ c.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Monthly limit</mat-label>
+        <span matTextPrefix>₹&nbsp;</span>
+        <input matInput type="number" min="1" formControlName="amount" (keydown.enter)="add()" />
+      </mat-form-field>
+      <button mat-flat-button (click)="add()"><mat-icon>add</mat-icon> Add budget</button>
+    </article>
+  }
+</section>

@@ -1,0 +1,56 @@
+<mat-sidenav-container class="container">
+  <mat-sidenav #drawer class="sidenav" [mode]="isHandset() ? 'over' : 'side'" [opened]="!isHandset()">
+    <a class="brand" routerLink="/dashboard" (click)="closeOnHandset(drawer)">
+      <span class="logo"><mat-icon>account_balance_wallet</mat-icon></span>
+      <span>Expense Tracker</span>
+    </a>
+    <mat-nav-list>
+      @for (link of links; track link.path) {
+        <a mat-list-item [routerLink]="link.path" routerLinkActive #active="routerLinkActive"
+           [activated]="active.isActive" (click)="closeOnHandset(drawer)">
+          <mat-icon matListItemIcon>{{ link.icon }}</mat-icon>
+          <span matListItemTitle>{{ link.label }}</span>
+        </a>
+      }
+    </mat-nav-list>
+    <div class="stack">
+      <span class="stack-title">Built with</span>
+      Spring Boot · JWT · JPA · MySQL · Angular
+    </div>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    @if (demo) {
+      <div class="demo-banner">
+        <mat-icon>science</mat-icon>
+        Live demo: data is kept in your browser only.
+        <a href="https://github.com/SushilAmbekar/expense-tracker-fullstack" target="_blank" rel="noopener">
+          View source on GitHub
+        </a>
+      </div>
+    }
+    <mat-toolbar class="toolbar">
+      @if (isHandset()) {
+        <button mat-icon-button (click)="drawer.toggle()" aria-label="Open menu">
+          <mat-icon>menu</mat-icon>
+        </button>
+      }
+      <span class="spacer"></span>
+      <button mat-button class="user" [matMenuTriggerFor]="menu">
+        <span class="avatar">{{ initials() }}</span>
+        <span class="name">{{ user()?.name }}</span>
+        <mat-icon iconPositionEnd>expand_more</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu" xPosition="before">
+        <div class="menu-email">{{ user()?.email }}</div>
+        <button mat-menu-item (click)="logout()">
+          <mat-icon>logout</mat-icon>
+          <span>Sign out</span>
+        </button>
+      </mat-menu>
+    </mat-toolbar>
+    <main class="content">
+      <router-outlet />
+    </main>
+  </mat-sidenav-content>
+</mat-sidenav-container>

@@ -1,0 +1,93 @@
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+
+  mat-form-field {
+    flex: 1 1 180px;
+  }
+
+  .search {
+    flex: 2 1 240px;
+  }
+}
+
+.table-panel {
+  position: relative;
+  padding: 0;
+  overflow: hidden;
+}
+
+.loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+.error-panel {
+  margin: 16px;
+}
+
+.table-scroll {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  background: transparent;
+}
+
+th.mat-mdc-header-cell {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.description {
+  max-width: 320px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.num {
+  text-align: right;
+}
+
+.amount {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.actions {
+  width: 96px;
+  white-space: nowrap;
+  text-align: right;
+}
+
+.no-data {
+  padding: 48px 16px;
+  text-align: center;
+  color: var(--muted);
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  padding-left: 16px;
+  border-top: 1px solid var(--border);
+
+  mat-paginator {
+    margin-left: auto;
+    background: transparent;
+  }
+}
+
+.page-total {
+  color: var(--muted);
+  font-size: 14px;
+}

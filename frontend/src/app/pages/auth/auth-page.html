@@ -1,0 +1,87 @@
+<div class="page">
+  <section class="hero">
+    <div class="brand">
+      <span class="logo"><mat-icon>account_balance_wallet</mat-icon></span>
+      Expense Tracker
+    </div>
+    <h1>Know where every rupee goes.</h1>
+    <p>Track expenses, set monthly budgets per category and see your spending trends at a glance.</p>
+    <ul>
+      <li><mat-icon>insights</mat-icon> Dashboard with spending by category and a 6-month trend</li>
+      <li><mat-icon>savings</mat-icon> Monthly budgets that warn you before you overspend</li>
+      <li><mat-icon>filter_alt</mat-icon> Search, filter and export your expenses to CSV</li>
+    </ul>
+    <p class="stack">Spring Boot · Spring Security (JWT) · JPA/Hibernate · MySQL · Angular · Docker</p>
+  </section>
+
+  <section class="card">
+    <h2>{{ isRegister() ? 'Create your account' : 'Welcome back' }}</h2>
+    <p class="sub">
+      {{ isRegister() ? 'It takes less than a minute.' : 'Sign in to see your expenses.' }}
+    </p>
+
+    @if (expired()) {
+      <div class="notice">Your session ended. Please sign in again.</div>
+    }
+    @if (error(); as message) {
+      <div class="notice error" role="alert">{{ message }}</div>
+    }
+
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      @if (isRegister()) {
+        <mat-form-field>
+          <mat-label>Name</mat-label>
+          <input matInput formControlName="name" autocomplete="name" />
+          @if (form.controls.name.hasError('required')) {
+            <mat-error>Enter your name</mat-error>
+          }
+        </mat-form-field>
+      }
+      <mat-form-field>
+        <mat-label>Email</mat-label>
+        <input matInput type="email" formControlName="email" autocomplete="email" />
+        @if (form.controls.email.hasError('required')) {
+          <mat-error>Enter your email</mat-error>
+        } @else if (form.controls.email.hasError('email')) {
+          <mat-error>Enter a valid email</mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Password</mat-label>
+        <input matInput [type]="hidePassword() ? 'password' : 'text'" formControlName="password"
+               [autocomplete]="isRegister() ? 'new-password' : 'current-password'" />
+        <button mat-icon-button matSuffix type="button" (click)="hidePassword.set(!hidePassword())"
+                [attr.aria-label]="hidePassword() ? 'Show password' : 'Hide password'">
+          <mat-icon>{{ hidePassword() ? 'visibility' : 'visibility_off' }}</mat-icon>
+        </button>
+        @if (form.controls.password.hasError('required')) {
+          <mat-error>Enter a password</mat-error>
+        } @else if (form.controls.password.hasError('minlength')) {
+          <mat-error>Use at least 8 characters</mat-error>
+        }
+      </mat-form-field>
+
+      <button mat-flat-button class="submit" type="submit" [disabled]="busy()">
+        @if (busy()) {
+          <mat-spinner diameter="20" />
+        } @else {
+          {{ isRegister() ? 'Create account' : 'Sign in' }}
+        }
+      </button>
+    </form>
+
+    <div class="divider"><span>or</span></div>
+    <button mat-stroked-button class="demo" type="button" (click)="useDemoAccount()" [disabled]="busy()">
+      <mat-icon>bolt</mat-icon>
+      Explore with the demo account
+    </button>
+
+    <p class="switch">
+      @if (isRegister()) {
+        Already have an account? <a routerLink="/login">Sign in</a>
+      } @else {
+        New here? <a routerLink="/register">Create an account</a>
+      }
+    </p>
+  </section>
+</div>

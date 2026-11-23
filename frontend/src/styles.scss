@@ -1,0 +1,219 @@
+@use '@angular/material' as mat;
+
+html {
+  color-scheme: light;
+  @include mat.theme((
+    color: (
+      primary: mat.$violet-palette,
+      tertiary: mat.$orange-palette,
+      theme-type: light,
+    ),
+    typography: Inter,
+    density: 0,
+  ));
+
+  --page: #f6f7fb;
+  --surface: #ffffff;
+  --subtle: #f1f5f9;
+  --border: #e5e7eb;
+  --text: #0f172a;
+  --muted: #64748b;
+  --brand: #4f46e5;
+  --brand-2: #7c3aed;
+  --brand-soft: #eef2ff;
+  --brand-ink: #3730a3;
+  --success: #059669;
+  --warning: #d97706;
+  --danger: #dc2626;
+  --danger-soft: #fef2f2;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, Roboto, 'Helvetica Neue', sans-serif;
+  background: var(--page);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--brand);
+}
+
+h1,
+h2 {
+  letter-spacing: -0.01em;
+}
+
+/* Page layout shared by every page */
+
+.page-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 20px;
+
+  h1 {
+    margin: 0;
+    font-size: 28px;
+  }
+}
+
+.page-sub {
+  margin: 4px 0 0;
+  color: var(--muted);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+
+  h2 {
+    margin: 0 0 12px;
+    font-size: 16px;
+    font-weight: 600;
+  }
+}
+
+.error-panel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.form-error {
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--danger-soft);
+  color: var(--danger);
+  font-size: 14px;
+}
+
+.empty {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  padding: 56px 20px;
+  text-align: center;
+
+  > mat-icon {
+    width: 48px;
+    height: 48px;
+    font-size: 48px;
+    color: var(--brand);
+  }
+
+  h2 {
+    margin: 8px 0 0;
+    font-size: 20px;
+  }
+
+  p {
+    margin: 0 0 12px;
+    color: var(--muted);
+  }
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.dot {
+  display: inline-block;
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.chip {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.cat-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  font-weight: 700;
+}
+
+/* Progress meter for budgets: green, then orange at 80%, red when over */
+
+.meter {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--subtle);
+  overflow: hidden;
+
+  span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--success);
+    transition: width 0.4s ease;
+  }
+
+  &.warn span {
+    background: var(--warning);
+  }
+
+  &.over span {
+    background: var(--danger);
+  }
+}
+
+.over-text {
+  color: var(--danger) !important;
+}
+
+.warn-text {
+  color: var(--warning) !important;
+}
+
+.danger.mat-mdc-unelevated-button:not(:disabled) {
+  background: var(--danger);
+  color: #fff;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+mat-progress-bar {
+  margin-bottom: 12px;
+  border-radius: 4px;
+}

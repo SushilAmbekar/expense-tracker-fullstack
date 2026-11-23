@@ -1,0 +1,74 @@
+<header class="page-header">
+  <div>
+    <h1>Categories</h1>
+    <p class="page-sub">Group your expenses the way you think about them</p>
+  </div>
+</header>
+
+@if (loading()) {
+  <mat-progress-bar mode="indeterminate" />
+}
+@if (error(); as message) {
+  <div class="panel error-panel" role="alert">
+    {{ message }}
+    <button mat-button (click)="load()">Try again</button>
+  </div>
+}
+
+<div class="layout">
+  <section class="panel list">
+    @for (c of categories(); track c.id) {
+      <div class="item" [class.selected]="editing()?.id === c.id">
+        <span class="swatch" [style.background]="c.color + '22'" [style.color]="c.color">{{ c.name[0] }}</span>
+        <span class="name">{{ c.name }}</span>
+        <button mat-icon-button (click)="edit(c)" matTooltip="Edit" aria-label="Edit category">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button (click)="remove(c)" matTooltip="Delete" aria-label="Delete category">
+          <mat-icon>delete_outline</mat-icon>
+        </button>
+      </div>
+    } @empty {
+      @if (!loading()) {
+        <p class="muted">No categories yet.</p>
+      }
+    }
+  </section>
+
+  <section class="panel editor" [formGroup]="form">
+    <h2>{{ editing() ? 'Edit category' : 'New category' }}</h2>
+    <mat-form-field>
+      <mat-label>Name</mat-label>
+      <input matInput formControlName="name" maxlength="50" (keydown.enter)="save()" />
+      @if (form.controls.name.hasError('required')) {
+        <mat-error>Enter a name</mat-error>
+      }
+    </mat-form-field>
+    <div class="label">Colour</div>
+    <div class="colours" role="radiogroup" aria-label="Colour">
+      @for (colour of colours; track colour) {
+        <button type="button" class="colour" role="radio" [style.background]="colour"
+                [attr.aria-checked]="form.controls.color.value === colour" [attr.aria-label]="colour"
+                [class.active]="form.controls.color.value === colour" (click)="form.controls.color.setValue(colour)">
+          @if (form.controls.color.value === colour) {
+            <mat-icon>check</mat-icon>
+          }
+        </button>
+      }
+    </div>
+    <div class="preview">
+      <span class="swatch" [style.background]="form.controls.color.value + '22'" [style.color]="form.controls.color.value">
+        {{ (form.controls.name.value || '?')[0] }}
+      </span>
+      {{ form.controls.name.value || 'Preview' }}
+    </div>
+    <div class="buttons">
+      @if (editing()) {
+        <button mat-button (click)="cancel()">Cancel</button>
+      }
+      <button mat-flat-button (click)="save()" [disabled]="busy()">
+        {{ editing() ? 'Save changes' : 'Add category' }}
+      </button>
+    </div>
+  </section>
+</div>
