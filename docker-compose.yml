@@ -1,0 +1,45 @@
+# Runs the whole app: MySQL, the Spring Boot API and the Angular app behind nginx.
+#   docker compose up --build
+# Then open http://localhost:4200 and sign in with the demo account (demo@expense-tracker.dev / demo12345).
+# The API docs are at http://localhost:8080/swagger-ui.html
+
+services:
+  mysql:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: expense_tracker
+      MYSQL_USER: expense
+      MYSQL_PASSWORD: ${DB_PASSWORD:-expense}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root}
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASSWORD:-root}"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  backend:
+    build: ./backend
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/expense_tracker?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      DB_USERNAME: expense
+      DB_PASSWORD: ${DB_PASSWORD:-expense}
+      # Set your own secret (at least 32 characters) for anything beyond local use.
+      JWT_SECRET: ${JWT_SECRET:-local-development-secret-change-me-0123456789}
+      DEMO_DATA_ENABLED: ${DEMO_DATA_ENABLED:-true}
+    ports:
+      - "8080:8080"
+
+  frontend:
+    build: ./frontend
+    depends_on:
+      - backend
+    ports:
+      - "4200:80"
+
+volumes:
+  mysql-data:
