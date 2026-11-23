@@ -113,8 +113,9 @@ public class DemoDataLoader implements ApplicationRunner {
         }
 
         String month = YearMonth.from(today).toString();
-        Map.of("Food & Dining", 9000, "Transport", 4000, "Shopping", 5000, "Bills & Utilities", 3500,
-                        "Entertainment", 2000)
+        // Close to what the sample data spends in a month, so some budgets are on track and some run close
+        Map.of("Food & Dining", 7000, "Transport", 5500, "Shopping", 9000, "Bills & Utilities", 5000,
+                        "Entertainment", 1800)
                 .forEach((name, amount) -> budgets.save(
                         new Budget(user.getId(), byName.get(name), month, BigDecimal.valueOf(amount))));
         log.info("Created the demo account {} with sample expenses", DEMO_EMAIL);
