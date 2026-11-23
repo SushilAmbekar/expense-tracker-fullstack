@@ -146,6 +146,24 @@
 
 @media (max-width: 479px) {
   .stats {
-    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .stat {
+    padding: 14px;
+  }
+
+  .stat-icon {
+    width: 32px;
+    height: 32px;
+    margin-bottom: 4px;
+  }
+
+  .stat-value {
+    font-size: 20px;
+  }
+
+  .trend {
+    font-size: 12px;
   }
 }

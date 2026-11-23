@@ -30,7 +30,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Creates a demo account with three months of realistic expenses and this month's budgets, so the app can be
+ * Creates a demo account with six months of realistic expenses and this month's budgets, so the app can be
  * explored right after {@code docker compose up}. Enabled with {@code DEMO_DATA_ENABLED=true}; runs once.
  */
 @Component
@@ -99,7 +99,7 @@ public class DemoDataLoader implements ApplicationRunner {
 
         Random random = new Random(42);
         LocalDate today = LocalDate.now(clock);
-        LocalDate start = YearMonth.from(today).minusMonths(2).atDay(1);
+        LocalDate start = YearMonth.from(today).minusMonths(5).atDay(1);
         for (LocalDate day = start; !day.isAfter(today); day = day.plusDays(1)) {
             int perDay = random.nextInt(3);
             for (int i = 0; i < perDay; i++) {

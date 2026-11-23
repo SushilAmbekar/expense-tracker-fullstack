@@ -20,7 +20,7 @@ import { addMonths, currentMonth, daysInMonth, toIsoDate } from '../core/months'
  * the data in localStorage. Only the demo build registers it.
  */
 
-const STORAGE_KEY = 'expense-tracker.demo-db.v1';
+const STORAGE_KEY = 'expense-tracker.demo-db.v2';
 const DEMO_EMAIL = 'demo@expense-tracker.dev';
 
 interface StoredUser extends User {
@@ -535,7 +535,7 @@ function saveDb(): void {
   }
 }
 
-/** Gives the demo account three months of realistic expenses ending today, once per day. */
+/** Gives the demo account six months of realistic expenses ending today, once per day. */
 function refreshDemoData(userId: number): void {
   const today = toIsoDate(new Date());
   const latest = db.expenses.filter((e) => e.userId === userId).reduce((max, e) => (e.date > max ? e.date : max), '');
@@ -575,7 +575,7 @@ function refreshDemoData(userId: number): void {
   const now = new Date();
   const thisMonth = currentMonth(now);
 
-  for (let back = 2; back >= 0; back--) {
+  for (let back = 5; back >= 0; back--) {
     const m = addMonths(thisMonth, -back);
     const lastDay = back === 0 ? now.getDate() : daysInMonth(m);
     // The current month only has the days so far, so it gets a share of each month's expenses.

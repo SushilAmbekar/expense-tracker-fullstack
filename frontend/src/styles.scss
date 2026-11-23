@@ -11,6 +11,16 @@ html {
     typography: Inter,
     density: 0,
   ));
+  // Use the brand indigo for buttons and the active navigation item
+  @include mat.theme-overrides((
+    primary: #4f46e5,
+    on-primary: #ffffff,
+    primary-container: #e0e7ff,
+    secondary-container: #e0e7ff,
+    on-secondary-container: #312e81,
+    surface-container: #ffffff,
+    surface-container-high: #ffffff,
+  ));
 
   --page: #f6f7fb;
   --surface: #ffffff;
