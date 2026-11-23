@@ -55,3 +55,38 @@ jobs:
         run: npm run build
       - name: Demo build
         run: npm run build:demo
+
+  docker:
+    name: Docker Compose smoke test (MySQL + API + nginx)
+    runs-on: ubuntu-latest
+    needs: [backend, frontend]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Start the stack
+        run: docker compose up -d --build
+      - name: Wait for the API to be ready
+        run: |
+          for i in $(seq 1 60); do
+            if curl -fs http://localhost:8080/actuator/health/readiness | grep -q '"UP"'; then exit 0; fi
+            sleep 3
+          done
+          docker compose logs backend
+          exit 1
+      - name: Sign in through nginx and read the dashboard data
+        run: |
+          token=$(curl -fs -X POST http://localhost:4200/api/auth/login \
+            -H 'Content-Type: application/json' \
+            -d '{"email":"demo@expense-tracker.dev","password":"demo12345"}' \
+            | python3 -c 'import json,sys; print(json.load(sys.stdin)["token"])')
+          curl -fs http://localhost:4200/api/analytics/summary -H "Authorization: Bearer $token" \
+            | python3 -c 'import json,sys; s=json.load(sys.stdin); print("month", s["month"], "spent", s["total"], "budget", s["budgetTotal"]); assert s["budgetTotal"] > 0'
+          curl -fs "http://localhost:4200/api/expenses?size=1" -H "Authorization: Bearer $token" \
+            | python3 -c 'import json,sys; p=json.load(sys.stdin); print("expenses", p["totalElements"]); assert p["totalElements"] > 0'
+          curl -fs http://localhost:4200/ | grep -q '<app-root>'
+          curl -fs http://localhost:4200/expenses | grep -q '<app-root>'
+      - name: Logs
+        if: failure()
+        run: docker compose logs
+      - name: Stop
+        if: always()
+        run: docker compose down -v
