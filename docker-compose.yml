@@ -1,5 +1,6 @@
 # Runs the whole app: MySQL, the Spring Boot API and the Angular app behind nginx.
-#   docker compose up --build
+#   docker compose up --build     builds the images from this checkout
+#   docker compose pull && docker compose up     uses the published images instead
 # Then open http://localhost:4200 and sign in with the demo account (demo@expense-tracker.dev / demo12345).
 # The API docs are at http://localhost:8080/swagger-ui.html
 
@@ -20,6 +21,7 @@ services:
       retries: 30
 
   backend:
+    image: ghcr.io/sushilambekar/expense-tracker-backend:latest
     build: ./backend
     depends_on:
       mysql:
@@ -35,6 +37,7 @@ services:
       - "8080:8080"
 
   frontend:
+    image: ghcr.io/sushilambekar/expense-tracker-frontend:latest
     build: ./frontend
     depends_on:
       - backend

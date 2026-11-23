@@ -2,6 +2,8 @@
 
 [![CI](https://github.com/SushilAmbekar/expense-tracker-fullstack/actions/workflows/ci.yml/badge.svg)](https://github.com/SushilAmbekar/expense-tracker-fullstack/actions/workflows/ci.yml)
 [![Live demo](https://img.shields.io/badge/live%20demo-open-4f46e5)](https://sushilambekar.github.io/expense-tracker-fullstack/)
+[![Release](https://img.shields.io/github/v/release/SushilAmbekar/expense-tracker-fullstack)](https://github.com/SushilAmbekar/expense-tracker-fullstack/releases/latest)
+[![Docker images](https://img.shields.io/badge/docker-ghcr.io-2496ed?logo=docker&logoColor=white)](https://github.com/SushilAmbekar?tab=packages&repo_name=expense-tracker-fullstack)
 ![Java 17](https://img.shields.io/badge/Java-17-orange)
 ![Spring Boot 3.5](https://img.shields.io/badge/Spring%20Boot-3.5-6db33f)
 ![Angular 20](https://img.shields.io/badge/Angular-20-dd0031)
@@ -80,6 +82,19 @@ docker compose up --build
 | API docs (Swagger UI) | http://localhost:8080/swagger-ui.html |
 | Health | http://localhost:8080/actuator/health |
 
+To skip the build, use the images CI publishes to GitHub Container Registry:
+
+```bash
+docker compose pull && docker compose up
+```
+
+| Image | Contents |
+| --- | --- |
+| [`ghcr.io/sushilambekar/expense-tracker-backend`](https://github.com/SushilAmbekar/expense-tracker-fullstack/pkgs/container/expense-tracker-backend) | The Spring Boot API on a JRE image, running as a non-root user |
+| [`ghcr.io/sushilambekar/expense-tracker-frontend`](https://github.com/SushilAmbekar/expense-tracker-fullstack/pkgs/container/expense-tracker-frontend) | The Angular app on nginx, proxying `/api` to the backend |
+
+Tags: `latest` follows `main`, and each [release](https://github.com/SushilAmbekar/expense-tracker-fullstack/releases) adds its version (`1.0.0`, `1.0`). Releases also attach the API as a runnable jar.
+
 Set `JWT_SECRET` (at least 32 characters) and `DB_PASSWORD` in the environment for anything beyond local use, and `DEMO_DATA_ENABLED=false` to start without the demo account.
 
 ### Without Docker
@@ -147,6 +162,8 @@ GitHub Actions runs on every pull request:
 1. **Backend:** `mvn verify`. Integration tests start the whole application (security, validation, JPA, the real Flyway migrations) on an in-memory database.
 2. **Frontend:** unit tests in headless Chrome, the production build and the demo build.
 3. **Docker Compose smoke test:** builds the images, starts MySQL + API + nginx, waits for the readiness probe, then signs in through nginx and reads real data.
+
+On every merge to `main`, the release workflow publishes both Docker images to GitHub Container Registry. Pushing a version tag such as `v1.0.0` also publishes versioned images and creates a GitHub release with the API jar and release notes.
 
 The live demo is the Angular demo build on GitHub Pages: it answers the API in the browser with sample data (the same rules and error messages as the real API), so it works without a server.
 
